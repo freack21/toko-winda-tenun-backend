@@ -3,16 +3,17 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TransactionResource\Pages;
-use App\Filament\Resources\TransactionResource\RelationManagers;
+use App\Helpers\CurrencyFormatter;
 use App\Models\Transaction;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionResource extends Resource
 {
@@ -23,7 +24,18 @@ class TransactionResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([]);
+            ->schema([
+                Select::make('status')->options(
+                    [
+                        "PENDING" => "PENDING",
+                        "SUCCESS" => "SUCCESS",
+                        "CANCELLED" => "CANCELLED",
+                        "FAILED" => "FAILED",
+                        "SHIPPING" => "SHIPPING",
+                        "SHIPPED" => "SHIPPED"
+                    ]
+                )->searchable(),
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -32,21 +44,33 @@ class TransactionResource extends Resource
             ->columns([
                 TextColumn::make('user.username')->label("Buyer")->sortable(),
                 TextColumn::make('address')->sortable(),
-                TextColumn::make('payment')->sortable(),
-                TextColumn::make('total_price')->sortable(),
-                TextColumn::make('shipping_price')->sortable(),
-                TextColumn::make('status')->sortable()
+                TextColumn::make('total_price')->sortable()->formatStateUsing(fn ($state) => CurrencyFormatter::formatRupiah($state)),
+                TextColumn::make('shipping_price')->sortable()->formatStateUsing(fn ($state) => CurrencyFormatter::formatRupiah($state)),
+                TextColumn::make('status')->sortable()->badge()
+                    ->colors([
+                        'primary',
+                        'secondary' => 'PENDING',
+                        'warning' => 'SHIPPING',
+                        'success' => 'SUCCESS',
+                        'danger' => 'FAILED',
+                    ])
             ])
             ->filters([])
-            ->actions([])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
             ->bulkActions([]);
     }
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return Auth::user()->hasRole('SUPERADMIN');
     }
 
     public static function getPages(): array

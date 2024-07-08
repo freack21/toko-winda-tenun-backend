@@ -1,0 +1,29 @@
+.status-pending {
+  background-color: yellow;
+  color: black;
+}
+
+.status-success {
+  background-color: green;
+  color: white;
+}
+
+.status-cancelled {
+  background-color: red;
+  color: white;
+}
+
+.status-failed {
+  background-color: gray;
+  color: white;
+}
+
+.status-shipping {
+  background-color: blue;
+  color: white;
+}
+
+.status-shipped {
+  background-color: purple;
+  color: white;
+}

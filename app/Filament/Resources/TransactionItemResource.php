@@ -12,7 +12,9 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionItemResource extends Resource
 {
@@ -31,20 +33,25 @@ class TransactionItemResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('user.username')->label("Buyer")->sortable(),
-                TextColumn::make('products.name')->label("Product")->sortable(),
+                TextColumn::make('product.name')->label("Product")->sortable(),
                 TextColumn::make('transactions_id')->label("Transaction")->sortable(),
                 TextColumn::make('quantity')->sortable()
             ])
             ->filters([])
-            ->actions([])
+            ->actions([
+                Tables\Actions\DeleteAction::make(),
+            ])
             ->bulkActions([]);
     }
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return Auth::user()->hasRole('SUPERADMIN');
     }
 
     public static function getPages(): array

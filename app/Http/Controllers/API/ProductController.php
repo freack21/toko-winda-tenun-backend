@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -17,7 +18,7 @@ class ProductController extends Controller
         $name = $request->input('name');
         $description = $request->input('description');
         $tags = $request->input('tags');
-        $categories = $request->input('categories');
+        $category = $request->input('category');
 
         $price_from = $request->input('price_from');
         $price_to = $request->input('price_to');
@@ -55,8 +56,13 @@ class ProductController extends Controller
         if ($price_to)
             $product->where('price', '<=', $price_to);
 
-        if ($categories)
-            $product->where('categories_id', $categories);
+        if ($category) {
+            $ctg = ProductCategory::query()
+                ->whereRaw('LOWER(name) = ?', [strtolower($category)])
+                ->pluck('id');
+
+            $product->whereIn('categories_id', $ctg);
+        }
 
         return ResponseFormatter::success(
             $product->paginate($limit),
