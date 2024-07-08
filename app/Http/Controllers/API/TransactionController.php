@@ -39,7 +39,7 @@ class TransactionController extends Controller
             $transaction->where('status', $status);
 
         return ResponseFormatter::success(
-            $transaction->paginate($limit),
+            $transaction->get(),
             'Data list transaksi berhasil diambil'
         );
     }
