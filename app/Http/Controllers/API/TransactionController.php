@@ -18,7 +18,7 @@ class TransactionController extends Controller
         $status = $request->input('status');
 
         if ($id) {
-            $transaction = Transaction::with(['items.product'])->find($id);
+            $transaction = Transaction::with(['items.product.category', 'items.product.galleries'])->find($id);
 
             if ($transaction)
                 return ResponseFormatter::success(
@@ -33,7 +33,7 @@ class TransactionController extends Controller
                 );
         }
 
-        $transaction = Transaction::with(['items.product'])->where('users_id', Auth::user()->id);
+        $transaction = Transaction::with(['items.product.category', 'items.product.galleries'])->where('users_id', Auth::user()->id);
 
         if ($status)
             $transaction->where('status', $status);
