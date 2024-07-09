@@ -2,15 +2,11 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ProductResource\Pages;
-use App\Filament\Resources\ProductResource\RelationManagers;
-use App\Helpers\CurrencyFormatter;
-use App\Models\Product;
-use App\Models\ProductCategory;
+use App\Filament\Resources\ProductVariationOptionResource\Pages;
+use App\Filament\Resources\ProductVariationOptionResource\RelationManagers;
+use App\Models\ProductVariationOption;
 use Filament\Forms;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -19,21 +15,17 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ProductResource extends Resource
+class ProductVariationOptionResource extends Resource
 {
-    protected static ?string $model = Product::class;
+    protected static ?string $model = ProductVariationOption::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 TextInput::make('name')->required(),
-                Textarea::make('description')->nullable(),
-                TextInput::make('price')->required()->extraAttributes(['id' => 'priceInput'])->prefix("Rp."),
-                Select::make('categories_id')->label("Category")->options(ProductCategory::all()->pluck('name', 'id'))->searchable(),
-                Textarea::make('tags')->nullable()
             ]);
     }
 
@@ -42,10 +34,10 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->sortable(),
-                TextColumn::make('price')->sortable()->formatStateUsing(fn ($state) => CurrencyFormatter::formatRupiah($state)),
-                TextColumn::make('category.name')->label("Category")->sortable(),
             ])
-            ->filters([])
+            ->filters([
+                //
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
@@ -67,9 +59,9 @@ class ProductResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProducts::route('/'),
-            'create' => Pages\CreateProduct::route('/create'),
-            'edit' => Pages\EditProduct::route('/{record}/edit'),
+            'index' => Pages\ListProductVariationOptions::route('/'),
+            'create' => Pages\CreateProductVariationOption::route('/create'),
+            'edit' => Pages\EditProductVariationOption::route('/{record}/edit'),
         ];
     }
 }

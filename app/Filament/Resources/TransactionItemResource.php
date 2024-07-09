@@ -34,6 +34,7 @@ class TransactionItemResource extends Resource
             ->columns([
                 TextColumn::make('user.username')->label("Buyer")->sortable(),
                 TextColumn::make('product.name')->label("Product")->sortable(),
+                TextColumn::make('variationString')->label('Variations')->sortable(),
                 TextColumn::make('transactions_id')->label("Transaction")->sortable(),
                 TextColumn::make('quantity')->sortable()
             ])

@@ -28,4 +28,16 @@ class Product extends Model
     {
         return $this->belongsTo(ProductCategory::class, 'categories_id', 'id');
     }
+
+    public function variationValues()
+    {
+        return $this->hasMany(ProductVariationValue::class, 'product_id');
+    }
+
+    public function variations()
+    {
+        return $this->belongsToMany(ProductVariationOption::class, 'product_variation_values', 'product_id', 'option_id')
+            ->withPivot('value')
+            ->withTimestamps();
+    }
 }

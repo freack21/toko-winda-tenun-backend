@@ -33,13 +33,23 @@ class TransactionController extends Controller
                 );
         }
 
-        $transaction = Transaction::with(['items.product.category', 'items.product.galleries'])->where('users_id', Auth::user()->id);
+        $transactionQuery = Transaction::with(['items.product.category', 'items.product.galleries'])
+            ->where('users_id', Auth::user()->id);
 
-        if ($status)
-            $transaction->where('status', $status);
+        if ($status) {
+            $transactionQuery->where('status', $status);
+        }
+
+        $transactions = $transactionQuery->get();
+
+        foreach ($transactions as $transaction) {
+            foreach ($transaction->items as $item) {
+                $item->variation_string = TransactionItem::with('variationString');
+            }
+        }
 
         return ResponseFormatter::success(
-            $transaction->get(),
+            $transaction,
             'Data list transaksi berhasil diambil'
         );
     }
