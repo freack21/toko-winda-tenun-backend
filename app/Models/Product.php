@@ -29,12 +29,12 @@ class Product extends Model
         return $this->belongsTo(ProductCategory::class, 'categories_id', 'id');
     }
 
-    public function variationValues()
+    public function variations()
     {
-        return $this->hasMany(ProductVariationValue::class, 'product_id');
+        return $this->hasMany(ProductVariationValue::class, 'product_id')->with('option');
     }
 
-    public function variations()
+    public function variationOptions()
     {
         return $this->belongsToMany(ProductVariationOption::class, 'product_variation_values', 'product_id', 'option_id')
             ->withPivot('value')
