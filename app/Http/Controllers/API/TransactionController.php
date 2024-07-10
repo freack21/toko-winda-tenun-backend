@@ -77,11 +77,14 @@ class TransactionController extends Controller
         ]);
 
         foreach ($request->items as $product) {
+            $variation_value_ids = $product['variation_value_ids'] ?? '[]';
+
             TransactionItem::create([
                 'users_id' => Auth::user()->id,
                 'products_id' => $product['id'],
                 'transactions_id' => $transaction->id,
-                'quantity' => $product['quantity']
+                'quantity' => $product['quantity'],
+                'variation_value_ids' => $variation_value_ids,
             ]);
         }
 
