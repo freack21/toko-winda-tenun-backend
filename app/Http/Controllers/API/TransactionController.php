@@ -20,12 +20,15 @@ class TransactionController extends Controller
         if ($id) {
             $transaction = Transaction::with(['items.product.category', 'items.product.galleries'])->find($id);
 
-            if ($transaction)
+            if ($transaction) {
+                foreach ($transaction->items as $item) {
+                    $item->variation_string = $item->variation_string;
+                }
                 return ResponseFormatter::success(
                     $transaction,
                     'Data transaksi berhasil diambil'
                 );
-            else
+            } else
                 return ResponseFormatter::error(
                     null,
                     'Data transaksi tidak ada',
@@ -44,12 +47,12 @@ class TransactionController extends Controller
 
         foreach ($transactions as $transaction) {
             foreach ($transaction->items as $item) {
-                $item->variation_string = TransactionItem::with('variationString');
+                $item->variation_string = $item->variation_string;
             }
         }
 
         return ResponseFormatter::success(
-            $transaction,
+            $transactions,
             'Data list transaksi berhasil diambil'
         );
     }
