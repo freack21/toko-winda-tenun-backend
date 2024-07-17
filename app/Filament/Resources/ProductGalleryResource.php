@@ -31,7 +31,7 @@ class ProductGalleryResource extends Resource
         return $form
             ->schema([
                 Select::make('products_id')->label("Product")->options(Product::all()->pluck('name', 'id'))->searchable()->required(),
-                FileUpload::make("url")->required()->label("Image")->image()
+                FileUpload::make('image')->image()->required(),
             ]);
     }
 
@@ -39,8 +39,8 @@ class ProductGalleryResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make("product.name")->label("Product")->sortable(),
-                ImageColumn::make("url")->label("Image")
+                TextColumn::make('product.name')->label("Product")->sortable(),
+                ImageColumn::make('image')->label("Image")
             ])
             ->filters([
                 //

@@ -18,6 +18,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 
 class ProductResource extends Resource
 {
@@ -33,7 +35,17 @@ class ProductResource extends Resource
                 Textarea::make('description')->nullable(),
                 TextInput::make('price')->required()->extraAttributes(['id' => 'priceInput'])->prefix("Rp."),
                 Select::make('categories_id')->label("Category")->options(ProductCategory::all()->pluck('name', 'id'))->searchable(),
-                Textarea::make('tags')->nullable()
+                Textarea::make('tags')->nullable(),
+
+                // repeater for product gallery */
+                Repeater::make('galleries')
+                    ->relationship('galleries')
+
+                    ->schema([
+                        FileUpload::make('image')->image()->required(),
+                    ])
+
+
             ]);
     }
 
@@ -41,10 +53,12 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
+                // index
+                TextColumn::make('id')->sortable(),
                 TextColumn::make('name')->sortable(),
                 TextColumn::make('price')->sortable()->formatStateUsing(fn ($state) => CurrencyFormatter::formatRupiah($state)),
                 TextColumn::make('category.name')->label("Category")->sortable(),
-            ])
+            ])->defaultSort('created_at', 'asc')
             ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),

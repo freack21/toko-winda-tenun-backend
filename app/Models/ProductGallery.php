@@ -12,12 +12,12 @@ class ProductGallery extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'products_id', 'url'
+        'products_id', 'image'
     ];
 
     public function getUrlAttribute($url)
     {
-        return config('app.url') . Storage::url($url);
+        return config('app.image') . Storage::url($url);
     }
 
     public function product()
