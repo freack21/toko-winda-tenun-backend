@@ -14,6 +14,10 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
+use App\Models\Product;
+
 
 class TransactionResource extends Resource
 {
@@ -21,10 +25,36 @@ class TransactionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
+    protected static ?string $navigationGroup = 'Transaction';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                // repeater for product gallery */
+                // name username relationship to user table
+                Select::make('username')
+                    ->relationship('user', 'username')->disabled(),
+
+                Forms\Components\Group::make()
+                    ->schema([
+
+                        Repeater::make('items')
+                            ->relationship('items')
+
+                            ->schema([
+                                Select::make('products_id')->label("Product")->options(Product::all()->pluck('name', 'id'))->searchable()->disabled(),
+                                TextInput::make('quantity')->readOnly(),
+                            ])->columns(2),
+                    ])->columnSpan(2),
+                // TextInput::make('user.username')->required(),
+
                 Select::make('status')->options(
                     [
                         "PENDING" => "PENDING",
@@ -58,6 +88,11 @@ class TransactionResource extends Resource
             ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                // view
+                Tables\Actions\ViewAction::make(),
+
+
+
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([]);

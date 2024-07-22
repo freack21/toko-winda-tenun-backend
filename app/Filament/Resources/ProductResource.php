@@ -27,6 +27,14 @@ class ProductResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
 
+    protected static ?string $navigationGroup = 'Products';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+
     public static function form(Form $form): Form
     {
         return $form
@@ -43,7 +51,13 @@ class ProductResource extends Resource
 
                     ->schema([
                         FileUpload::make('image')->image()->required(),
-                    ])
+                    ]),
+                Repeater::make('variations')
+                    ->relationship('variations')
+
+                    ->schema([
+                        Textarea::make('value')->nullable(),
+                        ])
 
 
             ]);
