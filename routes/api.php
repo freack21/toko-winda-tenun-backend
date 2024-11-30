@@ -6,6 +6,7 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\ProductCategoryController;
+use App\Http\Controllers\ImageController;
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -23,3 +24,5 @@ Route::get('categories', [ProductCategoryController::class, 'all']);
 
 Route::post('login', [UserController::class, 'login']);
 Route::post('register', [UserController::class, 'register']);
+
+Route::post('/save-image', [ImageController::class, 'store']);
