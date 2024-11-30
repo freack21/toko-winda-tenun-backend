@@ -15,7 +15,7 @@ class ImageController extends Controller
         ]);
 
         // Simpan gambar di folder storage/app/public/images
-        $path = $request->file('image')->store('public/images');
+        $path = $request->file('image')->move(public_path('/chat-images'));
 
         // Buat URL untuk gambar yang disimpan
         $url = Storage::url($path);
