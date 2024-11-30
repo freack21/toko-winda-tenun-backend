@@ -14,11 +14,15 @@ class ImageController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Simpan gambar di folder storage/app/public/images
-        $path = $request->file('image')->move(public_path('/chat-images'));
+        // Ambil file gambar dari request
+        $file = $request->file('image');
+
+        // Simpan gambar dengan nama asli di folder public/chat-images
+        $filename = time() . '_' . $file->getClientOriginalName(); // Pastikan nama file unik
+        $path = $file->move(public_path('chat-images'), $filename);
 
         // Buat URL untuk gambar yang disimpan
-        $url = Storage::url($path);
+        $url = asset('chat-images/' . $filename);
 
         // Kembalikan URL dalam respons
         return response()->json([
